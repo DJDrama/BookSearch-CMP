@@ -1,4 +1,4 @@
-package com.dj.booksearch.cmp.presentation
+package com.dj.booksearch.cmp.core.presentation
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.resources.StringResource
