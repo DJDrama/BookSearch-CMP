@@ -37,19 +37,19 @@ import booksearch_cmp.composeapp.generated.resources.favorites
 import booksearch_cmp.composeapp.generated.resources.no_favorite_books
 import booksearch_cmp.composeapp.generated.resources.no_search_results
 import booksearch_cmp.composeapp.generated.resources.search_results
+import com.dj.booksearch.cmp.book.domain.Book
 import com.dj.booksearch.cmp.book.presentation.book_list.components.BookList
 import com.dj.booksearch.cmp.book.presentation.book_list.components.BookSearchBar
 import com.dj.booksearch.cmp.core.presentation.DarkBlue
 import com.dj.booksearch.cmp.core.presentation.DesertWhite
 import com.dj.booksearch.cmp.core.presentation.SandYellow
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun BookListScreenRoot(
     viewModel: BookListViewModel = koinViewModel(),
-    onBookClick: () -> Unit,
+    onBookClick: (Book) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     BookListScreen(
@@ -57,7 +57,7 @@ fun BookListScreenRoot(
         onAction = {
             when (it) {
                 is BookListAction.OnBookClick -> {
-                    onBookClick()
+                    onBookClick(it.book)
                 }
 
                 else -> viewModel.onAction(action = it)
@@ -233,13 +233,4 @@ fun BookListScreen(
             }
         }
     }
-}
-
-// does not work in IDE
-@Preview
-@Composable
-fun BookListScreenPreview() {
-    BookListScreen(
-        state = BookListState()
-    ) {}
 }
