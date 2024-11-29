@@ -1,5 +1,8 @@
 package com.dj.booksearch.cmp.di
 
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.dj.booksearch.cmp.book.data.database.DatabaseFactory
+import com.dj.booksearch.cmp.book.data.database.FavoriteBookDatabase
 import com.dj.booksearch.cmp.book.data.network.KtorRemoteBookDataSource
 import com.dj.booksearch.cmp.book.data.network.RemoteBookDataSource
 import com.dj.booksearch.cmp.book.data.repository.DefaultBookRepository
@@ -22,6 +25,13 @@ val sharedModule = module {
     }
     singleOf(::KtorRemoteBookDataSource).bind<RemoteBookDataSource>()
     singleOf(::DefaultBookRepository).bind<BookRepository>()
+    single {
+        get<DatabaseFactory>()
+            .create()
+            .setDriver(driver = BundledSQLiteDriver())
+            .build()
+    }
+    single { get<FavoriteBookDatabase>().favoriteBookDao }
     viewModelOf(::BookListViewModel)
     viewModelOf(::SelectedBookViewModel)
     viewModelOf(::BookDetailViewModel)

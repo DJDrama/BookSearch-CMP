@@ -9,6 +9,8 @@ import com.dj.booksearch.cmp.book.domain.repository.BookRepository
 import com.dj.booksearch.cmp.core.domain.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -21,6 +23,7 @@ class BookDetailViewModel(
 
     private val _state = MutableStateFlow(BookDetailState())
     val state = _state.onStart {
+        observeFavoriteStatus()
         fetchBookDescription()
     }.stateIn(
         scope = viewModelScope,
@@ -33,7 +36,15 @@ class BookDetailViewModel(
     fun onAction(action: BookDetailAction) {
         when (action) {
             BookDetailAction.OnFavoriteClick -> {
-
+                viewModelScope.launch {
+                    if (state.value.isFavorite) {
+                        repository.deleteFromFavorites(id = bookId)
+                    } else {
+                        state.value.book?.let {
+                            repository.markAsFavorite(it)
+                        }
+                    }
+                }
             }
 
             is BookDetailAction.OnSelectedBookChange -> {
@@ -44,6 +55,17 @@ class BookDetailViewModel(
 
             else -> Unit
         }
+    }
+
+    private fun observeFavoriteStatus() {
+        repository.isBookFavorite(id = bookId)
+            .onEach { isFavorite ->
+                _state.update {
+                    it.copy(
+                        isFavorite = isFavorite
+                    )
+                }
+            }.launchIn(viewModelScope)
     }
 
     private fun fetchBookDescription() {

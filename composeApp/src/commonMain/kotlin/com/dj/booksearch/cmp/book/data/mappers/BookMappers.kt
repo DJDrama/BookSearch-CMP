@@ -1,5 +1,6 @@
 package com.dj.booksearch.cmp.book.data.mappers
 
+import com.dj.booksearch.cmp.book.data.database.BookEntity
 import com.dj.booksearch.cmp.book.data.dto.SearchedBookDto
 import com.dj.booksearch.cmp.book.domain.Book
 
@@ -22,7 +23,6 @@ fun SearchedBookDto.toBook(): Book {
         numEditions = numEditions ?: 0
     )
 }
-/*
 
 fun Book.toBookEntity(): BookEntity {
     return BookEntity(
@@ -54,4 +54,4 @@ fun BookEntity.toBook(): Book {
         numPages = numPagesMedian,
         numEditions = numEditions
     )
-}*/
+}
